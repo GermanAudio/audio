@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dein Audio Lerntool</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #0b1220;
+    color: #cfe9ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  header {
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  header h1 {
+    color: #00d1b2;
+    margin: 0;
+  }
+
+  header p {
+    color: #7cb3d8;
+    margin-top: 4px;
+  }
+
+  .container {
+    display: flex;
+    width: 90%;
+    max-width: 1000px;
+    background-color: #111a2f;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    overflow: hidden;
+  }
+
+  .sidebar {
+    width: 30%;
+    background-color: #182540;
+    padding: 20px;
+    overflow-y: auto;
+    max-height: 80vh;
+  }
+
+  .sidebar h2 {
+    color: #37e0c1;
+    margin-bottom: 10px;
+  }
+
+  .class-select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    margin-bottom: 15px;
+    font-size: 15px;
+  }
+
+  .track-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .track {
+    background-color: #243457;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-align: center;
+  }
+
+  .track:hover {
+    background-color: #2f4b7a;
+  }
+
+  .main {
+    flex: 1;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  audio {
+    width: 100%;
+    max-width: 550px;
+    margin-bottom: 20px;
+  }
+
+  .speed-controls {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    justify-items: center;
+  }
+
+  .speed-btn {
+    background-color: #243457;
+    border: none;
+    padding: 10px 20px;
+    color: #cfe9ff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 14px;
+  }
+
+  .speed-btn.active {
+    background-color: #00bfff;
+    color: #fff;
+  }
+
+  .speed-btn:hover {
+    background-color: #31518a;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🇩🇪 Dein Audio Lerntool</h1>
+  <p>Upload your German audio files for focused listening practice</p>
+</header>
+
+<div class="container">
+  <div class="sidebar">
+    <h2>Choose Class</h2>
+    <select class="class-select" id="classSelect">
+      <option value="7">Class 7</option>
+      <option value="9">Class 9</option>
+      <option value="10">Class 10</option>
+    </select>
+    <div class="track-list" id="trackList"></div>
+  </div>
+
+  <div class="main">
+    <audio id="audioPlayer" controls>
+      Your browser does not support the audio element.
+    </audio>
+
+    <div class="speed-controls">
+      <button class="speed-btn" data-rate="0.7">🐢 Slow (0.7x)</button>
+      <button class="speed-btn active" data-rate="1.0">🎧 Normal (1.0x)</button>
+      <button class="speed-btn" data-rate="1.25">⚡ Fast (1.25x)</button>
+      <button class="speed-btn" data-rate="1.5">🚀 Booster (1.5x)</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const classSelect = document.getElementById('classSelect');
+  const trackList = document.getElementById('trackList');
+  const audioPlayer = document.getElementById('audioPlayer');
+  const speedButtons = document.querySelectorAll('.speed-btn');
+
+  function loadTracks(classNum) {
+    trackList.innerHTML = '';
+
+    if (classNum === '7') {
+      for (let i = 1; i <= 59; i++) {
+        const track = document.createElement('div');
+        track.className = 'track';
+        track.textContent = `Track ${i}`;
+        const fileName = `Track ${i.toString().padStart(2, '0')}.mp3`;
+        track.dataset.src = `Class7/${fileName}`;
+        track.addEventListener('click', () => {
+          audioPlayer.src = track.dataset.src;
+          audioPlayer.play();
+        });
+        trackList.appendChild(track);
+      }
+    } else {
+      const msg = document.createElement('div');
+      msg.textContent = 'No tracks available yet.';
+      msg.style.color = '#7cb3d8';
+      trackList.appendChild(msg);
+    }
+  }
+
+  classSelect.addEventListener('change', (e) => {
+    loadTracks(e.target.value);
+  });
+
+  // Default class load
+  loadTracks('7');
+
+  // Playback speed controls
+  speedButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const rate = parseFloat(btn.dataset.rate);
+      audioPlayer.playbackRate = rate;
+      speedButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
